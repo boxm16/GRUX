@@ -1,0 +1,387 @@
+unit GRU;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, StdCtrls, ActnList;
+
+type
+  TForm1 = class(TForm)
+    Panel1: TPanel;
+    BtnLoad: TButton;
+    EdtLoad: TEdit;
+    Image1: TImage;
+    ScrollBarVertical: TScrollBar;
+    ScrollBarHorizontal: TScrollBar;
+    BtnNext: TButton;
+    CBIndex: TComboBox;
+    BtnSave: TButton;
+    BtnPreviews2: TButton;
+    BtnNext2: TButton;
+    CBIndexAb: TComboBox;
+    ActionList1: TActionList;
+    AB: TAction;
+    BA: TAction;
+    CBZero: TComboBox;
+    BtnPReviews: TButton;
+    CheckBox1: TCheckBox;
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
+    cbKatalog: TComboBox;
+    procedure FormCreate(Sender: TObject);
+    procedure BtnLoadClick(Sender: TObject);
+    procedure ScrollBarVerticalChange(Sender: TObject);
+    procedure ScrollBarHorizontalChange(Sender: TObject);
+    procedure BtnNextClick(Sender: TObject);
+    procedure BtnPreviewsClick(Sender: TObject);
+    procedure Panel1Resize(Sender: TObject);
+    procedure BtnSaveClick(Sender: TObject);
+    procedure CBKatalogSelect(Sender: TObject);
+    procedure CBIndexSelect(Sender: TObject);
+    procedure CBKatalogKeyPress(Sender: TObject; var Key: Char);
+    procedure BtnZeroClick(Sender: TObject);
+    procedure BtnPreviews2Click(Sender: TObject);
+    procedure BtnNext2Click(Sender: TObject);
+    procedure EdtLoadKeyPress(Sender: TObject; var Key: Char);
+    procedure ABExecute(Sender: TObject);
+    procedure BAExecute(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure CBKatalogEnter(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+  gr,el:THandle;
+  Layouts:array[0..7] of THandle;
+  n:integer;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+Image1.Picture.LoadFromFile('D:\GRU\11.bmp');
+ScrollBarVertical.Min:=0 ;
+ScrollBarHorizontal.Min:=0;
+ScrollBarHorizontal.Max:=IMage1.Picture.Width-Panel1.Width;
+ScrollBarVertical.Max:=IMage1.Picture.Height-Panel1.Width;
+
+CBKatalog.Items.LoadFromFile('D:\Gru\ComboBoxi\ComboBoxKatalog');
+CBIndex.Items.LoadFromFile('D:\Gru\ComboBoxi\ComboBoxIndex');
+CBIndexAB.Items.LoadFromFile('D:\Gru\ComboBoxi\ComboBoxIndexAB');
+
+
+end;
+
+procedure TForm1.BtnLoadClick(Sender: TObject);
+ var LoadingFileName:string;
+begin
+LoadingFileName:='D:\GRU\'+EdtLoad.Text+'.bmp' ;
+Image1.Picture.LoadFromFile(LoadingFileName);
+ScrollBarVertical.Min:=0 ;
+ScrollBarHorizontal.Min:=0;
+ScrollBarHorizontal.Max:=IMage1.Picture.Width-Panel1.Width;
+ScrollBarVertical.Max:=IMage1.Picture.Height-Panel1.Height;
+CBKatalog.SetFocus;
+end;
+
+procedure TForm1.ScrollBarVerticalChange(Sender: TObject);
+begin
+Image1.Top:=-ScrollBarVertical.Position;
+end;
+
+procedure TForm1.ScrollBarHorizontalChange(Sender: TObject);
+begin
+Image1.Left:=-ScrollBarHorizontal.Position;
+   end;
+procedure TForm1.BtnNextClick(Sender: TObject);
+var b:integer;
+    label 10,20;
+begin
+if ScrollBarHorizontal.Position<ScrollBarHorizontal.Max div 2
+then begin
+ScrollBarHorizontal.Position:=ScrollBarHorizontal.Max;
+ScrollBarVertical.Position:=ScrollBarVertical.Max;
+    end
+
+   else  begin
+b:=StrToInt(EdtLoad.Text);
+b:=b+1;
+EdtLoad.Text:=IntToStr(b);
+ ScrollBarHorizontal.Position:=0;
+ ScrollBarVertical.Position:=ScrollBarVertical.Max;
+BtnLoad.Click;
+               end;
+
+
+ CBKatalog.SetFocus;
+
+
+end;
+
+procedure TForm1.BtnPreviewsClick(Sender: TObject);
+var b:integer;
+    label 10,20;
+begin
+if ScrollBarHorizontal.Position>ScrollBarHorizontal.Max div 2
+then begin
+ScrollBarHorizontal.Position:=0;
+ScrollBarVertical.Position:=ScrollBarVertical.Min;
+
+    end
+
+   else  begin
+
+b:=StrToInt(EdtLoad.Text);
+b:=b-1;
+EdtLoad.Text:=IntToStr(b);
+ ScrollBarHorizontal.Position:=ScrollBarHorizontal.Max;
+ ScrollBarVertical.Position:=ScrollBarVertical.Min;
+BtnLoad.Click;
+
+end;
+CBKatalog.SetFocus;
+end;
+
+procedure TForm1.BAExecute(Sender: TObject);
+var x:integer;
+begin
+if ScrollBarHorizontal.Position=ScrollBarHorizontal.Min then begin
+CBIndexAB.Items.Add('A');
+ScrollBarHorizontal.Position:=ScrollBarHorizontal.Max
+end;
+
+end;
+procedure TForm1.Panel1Resize(Sender: TObject);
+begin
+BtnPreviews.Top:=0;
+BtnPReviews.Left:=ScrollBarVertical.Left;
+BtnNext.Left:=ScrollBarVertical.Left;
+BtnNext.Top:=ScrollBarHorizontal.Top-BtnNext.Height;
+
+
+end;
+
+procedure TForm1.BtnSaveClick(Sender: TObject);
+begin
+CBKatalog.Items.SaveToFile('D:\Gru\ComboBoxi\ComboBoxKatalog');
+CBIndex.Items.SaveToFile('D:\Gru\ComboBoxi\ComboBoxIndex');
+CBIndexAB.Items.SaveToFile('D:\Gru\ComboBoxi\ComboBoxIndexAB');
+CBKatalog.SetFocus;
+end;
+
+procedure TForm1.CBKatalogSelect(Sender: TObject);
+begin
+CBIndex.ItemIndex:=CBKatalog.ItemIndex;
+CBIndexAB.ItemIndex:=CBKatalog.ItemIndex;
+end;
+
+procedure TForm1.CBIndexSelect(Sender: TObject);
+begin
+CBKatalog.ItemIndex:=CBIndex.ItemIndex;
+end;
+
+procedure TForm1.CBKatalogKeyPress(Sender: TObject; var Key: Char);
+begin
+if Key=#13 then begin
+EdtLoad.Text:=CbIndex.Text;
+if CBIndexAB.Text='A' then ScrollBarHorizontal.Position:=ScrollBarHorizontal.Min else
+ScrollBarHorizontal.Position:=ScrollBarHorizontal.Max;
+BtnLoad.Click;
+  end;
+end;
+
+
+procedure TForm1.BtnZeroClick(Sender: TObject);
+begin
+CBKatalog.Items.Assign(CBZero.Items);
+CBIndex.Items.Assign(CBZero.Items);
+end;
+
+procedure TForm1.BtnPreviews2Click(Sender: TObject);
+var b:integer;
+    label 10,20;
+begin
+if ScrollBarHorizontal.Position>ScrollBarHorizontal.Max div 2
+then begin
+ScrollBarHorizontal.Position:=0;
+ScrollBarVertical.Position:=ScrollBarVertical.Max;
+
+    end
+
+   else  begin
+
+b:=StrToInt(EdtLoad.Text);
+b:=b-1;
+EdtLoad.Text:=IntToStr(b);
+ ScrollBarHorizontal.Position:=ScrollBarHorizontal.Max;
+ ScrollBarVertical.Position:=ScrollBarVertical.Max;
+BtnLoad.Click;
+
+end;
+CBKatalog.SetFocus;
+
+end;
+
+procedure TForm1.BtnNext2Click(Sender: TObject);
+var b:integer;
+    label 10,20;
+begin
+if ScrollBarHorizontal.Position<ScrollBarHorizontal.Max div 2
+then begin
+ScrollBarHorizontal.Position:=ScrollBarHorizontal.Max;
+ScrollBarVertical.Position:=ScrollBarVertical.Min;
+    end
+
+   else  begin
+b:=StrToInt(EdtLoad.Text);
+b:=b+1;
+EdtLoad.Text:=IntToStr(b);
+ ScrollBarHorizontal.Position:=0;
+ ScrollBarVertical.Position:=ScrollBarVertical.Min;
+BtnLoad.Click;
+               end;
+
+
+ CBKatalog.SetFocus;
+                          end;
+procedure TForm1.Button2Click(Sender: TObject);
+var b:integer;
+    label 10,20;
+begin
+if ScrollBarHorizontal.Position<ScrollBarHorizontal.Max div 2
+then begin
+ScrollBarHorizontal.Position:=ScrollBarHorizontal.Max;
+ScrollBarVertical.Position:=ScrollBarVertical.Min;
+    end
+
+   else  begin
+b:=StrToInt(EdtLoad.Text);
+b:=b+5;
+EdtLoad.Text:=IntToStr(b);
+ ScrollBarHorizontal.Position:=0;
+ ScrollBarVertical.Position:=ScrollBarVertical.Min;
+BtnLoad.Click;
+               end;
+         end;
+procedure TForm1.Button4Click(Sender: TObject);
+var b:integer;
+    label 10,20;
+begin
+if ScrollBarHorizontal.Position<ScrollBarHorizontal.Max div 2
+then begin
+ScrollBarHorizontal.Position:=ScrollBarHorizontal.Max;
+ScrollBarVertical.Position:=ScrollBarVertical.Min;
+    end
+
+   else  begin
+b:=StrToInt(EdtLoad.Text);
+b:=b-10;
+EdtLoad.Text:=IntToStr(b);
+ ScrollBarHorizontal.Position:=0;
+ ScrollBarVertical.Position:=ScrollBarVertical.Min;
+BtnLoad.Click;
+               end;          end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+var b:integer;
+    label 10,20;
+begin
+if ScrollBarHorizontal.Position<ScrollBarHorizontal.Max div 2
+then begin
+ScrollBarHorizontal.Position:=ScrollBarHorizontal.Max;
+ScrollBarVertical.Position:=ScrollBarVertical.Min;
+    end
+
+   else  begin
+b:=StrToInt(EdtLoad.Text);
+b:=b+10;
+EdtLoad.Text:=IntToStr(b);
+ ScrollBarHorizontal.Position:=0;
+ ScrollBarVertical.Position:=ScrollBarVertical.Min;
+BtnLoad.Click;
+               end;
+
+end;
+
+
+
+
+
+procedure TForm1.EdtLoadKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key=#13 then BtnLoad.Click;
+end;
+
+procedure TForm1.ABExecute(Sender: TObject);
+ var x:integer;
+begin
+if ScrollBarHorizontal.Position=ScrollBarHorizontal.Max then begin
+CBIndexAB.Items.Add('B');
+x:=StrToInt(EdtLoad.Text);
+x:=x+1;
+EdtLoad.Text:=IntToStr(x);
+BtnLoad.Click;
+ScrollBarHorizontal.Position:=ScrollBarHorizontal.Min;
+end;
+      end;
+procedure TForm1.FormResize(Sender: TObject);
+begin
+ScrollBarVertical.Left:=Form1.Width-ScrollBarVertical.Width;
+BtnPReviews.Left:=Form1.Width-BtnPReviews.Width;
+BtnNext.Left:=Form1.Width-BtnNext.Width;
+BtnPReviews2.Left:=Form1.Width-BtnPReviews2.Width;
+BtnNext2.Left:=Form1.Width-BtnNext2.Width;
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+var b:integer;
+    label 10,20;
+begin
+if ScrollBarHorizontal.Position<ScrollBarHorizontal.Max div 2
+then begin
+ScrollBarHorizontal.Position:=ScrollBarHorizontal.Max;
+ScrollBarVertical.Position:=ScrollBarVertical.Min;
+    end
+
+   else  begin
+b:=StrToInt(EdtLoad.Text);
+b:=b-5 ;
+EdtLoad.Text:=IntToStr(b);
+ ScrollBarHorizontal.Position:=0;
+ ScrollBarVertical.Position:=ScrollBarVertical.Min;
+BtnLoad.Click;
+               end;
+
+        end;
+
+procedure TForm1.CBKatalogEnter(Sender: TObject);
+var i:integer;
+begin
+
+n:=GetkeyboardLayoutList(high(Layouts)+1,Layouts);
+for i:=0 to n-1 do begin
+if LoWord(layouts[i]) and $FF=Lang_Greek
+  then gr :=Layouts[i];
+  if LoWord(Layouts[i]) and $FF=Lang_English
+     then el:=Layouts[i];
+     end;
+
+ ActivateKeyboardLayout(gr,0);
+
+end;
+
+end.
